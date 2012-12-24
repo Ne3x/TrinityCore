@@ -60,6 +60,7 @@ class WardenCheckMgr
         WardenCheck* GetWardenDataById(uint16 Id);
         WardenCheckResult* GetWardenResultById(uint16 Id);
 
+        std::vector<uint16> CustomChecksIdPool;
         std::vector<uint16> MemChecksIdPool;
         std::vector<uint16> OtherChecksIdPool;
 

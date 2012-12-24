@@ -179,6 +179,9 @@ void WardenWin::RequestData()
     sLog->outDebug(LOG_FILTER_WARDEN, "Request data");
 
     // If all checks were done, fill the todo list again
+    if (_customChecksTodo.empty())
+        _customChecksTodo.assign(sWardenCheckMgr->CustomChecksIdPool.begin(), sWardenCheckMgr->CustomChecksIdPool.end());
+
     if (_memChecksTodo.empty())
         _memChecksTodo.assign(sWardenCheckMgr->MemChecksIdPool.begin(), sWardenCheckMgr->MemChecksIdPool.end());
 
@@ -191,6 +194,21 @@ void WardenWin::RequestData()
     uint8 type;
     WardenCheck* wd;
     _currentChecks.clear();
+
+    // Build check request
+    for (uint32 i = 0; i < 2; ++i)
+    {
+        // If todo list is done break loop (will be filled on next Update() run)
+        if (_customChecksTodo.empty())
+            break;
+
+        // Get check id from the end and remove it from todo
+        id = _customChecksTodo.back();
+        _customChecksTodo.pop_back();
+
+        // Add the id to the list sent in this cycle
+        _currentChecks.push_back(id);
+    }
 
     // Build check request
     for (uint32 i = 0; i < sWorld->getIntConfig(CONFIG_WARDEN_NUM_MEM_CHECKS); ++i)

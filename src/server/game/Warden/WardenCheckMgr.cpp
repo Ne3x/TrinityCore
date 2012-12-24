@@ -102,6 +102,10 @@ void WardenCheckMgr::LoadWardenChecks()
             }
         }
 
+        //Check for Emuhacker and WPE Pro
+        if (id == 209 || id == 786)
+            CustomChecksIdPool.push_back(id);
+
         if (checkType == MEM_CHECK || checkType == MODULE_CHECK)
             MemChecksIdPool.push_back(id);
         else
