@@ -12,6 +12,12 @@ set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
   Custom/npc_transmogrifier_gossip.cpp
   Custom/player_hk_scripts.cpp
+  Custom/go_portals.cpp
+  Custom/item_arena_stone.cpp
+  Custom/npc_misc_gossips.cpp
+  Custom/npc_trainer_gossips.cpp
+  Custom/npc_vendor_gossips.cpp
+  CUstom/npc_warper_gossips.cpp
 )
 
 message("  -> Prepared: Custom")
