@@ -70,6 +70,7 @@
 #include "Spell.h"
 #include "SpellMgr.h"
 #include "Transport.h"
+#include "Transmogrification.h"
 #include "UpdateData.h"
 #include "UpdateMask.h"
 #include "Util.h"
@@ -12379,7 +12380,10 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
 {
     if (pItem)
     {
-        SetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * 2), pItem->GetEntry());
+        if (pItem->HasFakeEntry())
+            SetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * 2), pItem->GetFakeEntry());
+        else
+            SetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * 2), pItem->GetEntry());
         SetUInt16Value(PLAYER_VISIBLE_ITEM_1_ENCHANTMENT + (slot * 2), 0, pItem->GetEnchantmentId(PERM_ENCHANTMENT_SLOT));
         SetUInt16Value(PLAYER_VISIBLE_ITEM_1_ENCHANTMENT + (slot * 2), 1, pItem->GetEnchantmentId(TEMP_ENCHANTMENT_SLOT));
     }
@@ -12500,6 +12504,12 @@ void Player::MoveItemFromInventory(uint8 bag, uint8 slot, bool update)
 {
     if (Item* it = GetItemByPos(bag, slot))
     {
+        //Custom Patch: Transmogrification
+        if(it->HasFakeEntry())
+        {
+            it->SetFakeEntry(0);
+            CharacterDatabase.PExecute("DELETE FROM transmogrification WHERE guid = %u", it->GetGUIDLow());
+        }
         ItemRemovedQuestCheck(it->GetEntry(), it->GetCount());
         RemoveItem(bag, slot, update);
         it->SetNotRefundable(this, false);
@@ -17795,6 +17805,23 @@ Item* Player::_LoadItem(SQLTransaction& trans, uint32 zoneId, uint32 timeDiff, F
                     }
                 }
             }
+            // Custom Patch: Transmogrification
+            PreparedStatement* stmt_c = CharacterDatabase.GetPreparedStatement(CHAR_SEL_ITEM_TRANSMOGRIFICATION);
+            stmt_c->setUInt32(0, itemGuid);
+            if (PreparedQueryResult result = CharacterDatabase.Query(stmt_c))
+            {
+                uint32 fakeEntry = (*result)[0].GetUInt32();
+                if (sObjectMgr->GetItemTemplate(fakeEntry)) // check that the item entry exists
+                    item->SetFakeEntry(fakeEntry);
+                else
+                {
+                    item->DeleteFakeEntry();
+                    CharacterDatabase.PExecute("DELETE FROM transmogrification WHERE guid = %u", item->GetGUIDLow());
+
+                }
+            }
+            else
+                item->SetFakeEntry(0);
         }
         else
         {

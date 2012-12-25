@@ -1786,6 +1786,10 @@ void World::SetInitialWorldSettings()
     sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Calculate Guild cap reset time...");
     InitGuildResetTime();
 
+    //Custom Patch: Transmogrification 
+    sLog->outInfo(LOG_FILTER_SERVER_LOADING, "Deleting non-existing transmogrification entries...");
+    CharacterDatabase.Execute("DELETE FROM transmogrification WHERE NOT EXISTS (SELECT 1 FROM item_instance WHERE item_instance.guid = transmogrification.guid)");
+
     LoadCharacterNameData();
 
     uint32 startupDuration = GetMSTimeDiffToNow(startupBegin);

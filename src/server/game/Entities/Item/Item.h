@@ -350,6 +350,11 @@ class Item : public Object
         void BuildUpdate(UpdateDataMapType&);
 
         uint32 GetScriptId() const { return GetTemplate()->ScriptId; }
+
+        bool HasFakeEntry() { if (_fakeEntry > 0) return true; else return false;}
+        void SetFakeEntry(uint32 fakeEntry) {if (fakeEntry > 0) _fakeEntry = fakeEntry; else _fakeEntry = 0;}
+        uint32 GetFakeEntry() { return _fakeEntry; }
+        void DeleteFakeEntry() {if (HasFakeEntry()) _fakeEntry = 0;}
     private:
         std::string m_text;
         uint8 m_slot;
@@ -362,5 +367,6 @@ class Item : public Object
         uint32 m_paidMoney;
         uint32 m_paidExtendedCost;
         AllowedLooterSet allowedGUIDs;
+        uint32 _fakeEntry; // Custom Patch: Transmogrification
 };
 #endif
