@@ -947,6 +947,10 @@ void BattlegroundQueue::BattlegroundQueueUpdate(uint32 /*diff*/, BattlegroundTyp
                 return;
             }
 
+            //Check if the teams have the same IPs
+            if (!ValidateIps(aTeam, hTeam))
+                arena->SetWintrading(ERR_SAME_IP);
+
             aTeam->OpponentsTeamRating = hTeam->ArenaTeamRating;
             hTeam->OpponentsTeamRating = aTeam->ArenaTeamRating;
             aTeam->OpponentsMatchmakerRating = hTeam->ArenaMatchmakerRating;
@@ -975,6 +979,28 @@ void BattlegroundQueue::BattlegroundQueueUpdate(uint32 /*diff*/, BattlegroundTyp
             arena->StartBattleground();
         }
     }
+}
+
+bool BattlegroundQueue::ValidateIps(GroupQueueInfo* aTeam, GroupQueueInfo* hTeam)
+{
+    // loop through the players
+    for (std::map<uint64, PlayerQueueInfo*>::iterator itr = aTeam->Players.begin(); itr != aTeam->Players.end(); ++itr)
+    {
+        if (Player* aPlayer = ObjectAccessor::FindPlayer(itr->first))
+        {
+            for (std::map<uint64, PlayerQueueInfo*>::iterator itr = hTeam->Players.begin(); itr != hTeam->Players.end(); ++itr)
+            {
+                if (Player* hPlayer = ObjectAccessor::FindPlayer(itr->first))
+                {
+                    if (aPlayer->GetSession()->GetRemoteAddress() == hPlayer->GetSession()->GetRemoteAddress())
+                        return false;
+                }
+            }
+        }
+    
+    }
+
+    return true;
 }
 
 /*********************************************************/

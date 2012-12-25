@@ -236,6 +236,22 @@ enum BattlegroundStartingEventsIds
 };
 #define BG_STARTING_EVENT_COUNT 4
 
+//Custom
+enum WintradingResult
+{
+    NO_ERR      = 0,        // No wintrading occured, points can be given out
+    ERR_SAME_IP = 1,        // Someone on a team has the same ip with opponents      
+    ERR_TIME    = 2         // The match lasted less than the starting time + 10 seconds.
+};
+
+enum BGEvent
+{
+    BG_EVENT_WSG  = 100,
+    BG_EVENT_AB   = 101,
+    BG_EVENT_EOTS = 102,
+    BG_EVENT_SOTA = 103
+};
+
 struct BattlegroundScore
 {
     BattlegroundScore() : KillingBlows(0), Deaths(0), HonorableKills(0), BonusHonor(0),
@@ -531,6 +547,11 @@ class Battleground
 
         virtual uint32 GetPrematureWinner();
 
+        //custom
+        void RewardBGEventRewards(uint32 EventId, uint32 TeamID);
+        void EndOfMatchChecks(uint32 winnerTeam, uint32 loserTeam);
+        void SetWintrading(WintradingResult error) { _wintrading = error; }
+
     protected:
         // this method is called, when BG cannot spawn its own spirit guide, or something is wrong, It correctly ends Battleground
         void EndNow();
@@ -663,5 +684,8 @@ class Battleground
         float m_TeamStartLocO[BG_TEAMS_COUNT];
         float m_StartMaxDist;
         uint32 ScriptId;
+
+        //custom
+        uint32 _wintrading;
 };
 #endif

@@ -204,6 +204,8 @@ Battleground::Battleground()
     StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_BG_WS_START_ONE_MINUTE;
     StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_BG_WS_START_HALF_MINUTE;
     StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_BG_WS_HAS_BEGUN;
+
+    _wintrading = NO_ERR;
 }
 
 Battleground::~Battleground()
@@ -776,7 +778,11 @@ void Battleground::EndBattleground(uint32 winner)
         winnerArenaTeam = sArenaTeamMgr->GetArenaTeamById(GetArenaTeamIdForTeam(winner));
         loserArenaTeam = sArenaTeamMgr->GetArenaTeamById(GetArenaTeamIdForTeam(GetOtherTeam(winner)));
 
-        if (winnerArenaTeam && loserArenaTeam && winnerArenaTeam != loserArenaTeam)
+        //In case players have different IPs we still need to check the length of the match
+        if (_wintrading == NO_ERR)
+            EndOfMatchChecks(winner, GetOtherTeam(winner));
+
+        if (winnerArenaTeam && loserArenaTeam && winnerArenaTeam != loserArenaTeam && _wintrading == NO_ERR)
         {
             if (winner != WINNER_NONE)
             {
@@ -806,10 +812,10 @@ void Battleground::EndBattleground(uint32 winner)
             // Deduct 16 points from each teams arena-rating if there are no winners after 45+2 minutes
             else
             {
-                SetArenaTeamRatingChangeForTeam(ALLIANCE, ARENA_TIMELIMIT_POINTS_LOSS);
-                SetArenaTeamRatingChangeForTeam(HORDE, ARENA_TIMELIMIT_POINTS_LOSS);
-                winnerArenaTeam->FinishGame(ARENA_TIMELIMIT_POINTS_LOSS);
-                loserArenaTeam->FinishGame(ARENA_TIMELIMIT_POINTS_LOSS);
+                    SetArenaTeamRatingChangeForTeam(ALLIANCE, ARENA_TIMELIMIT_POINTS_LOSS);
+                    SetArenaTeamRatingChangeForTeam(HORDE, ARENA_TIMELIMIT_POINTS_LOSS);
+                    winnerArenaTeam->FinishGame(ARENA_TIMELIMIT_POINTS_LOSS);
+                    loserArenaTeam->FinishGame(ARENA_TIMELIMIT_POINTS_LOSS);
             }
         }
         else
@@ -851,7 +857,7 @@ void Battleground::EndBattleground(uint32 winner)
             player->RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
 
         // Last standing - Rated 5v5 arena & be solely alive player
-        if (team == winner && isArena() && isRated() && GetArenaType() == ARENA_TYPE_5v5 && aliveWinners == 1 && player->isAlive())
+        if (team == winner && isArena() && isRated() && GetArenaType() == ARENA_TYPE_5v5 && aliveWinners == 1 && player->isAlive() && _wintrading == NO_ERR)
             player->CastSpell(player, SPELL_THE_LAST_STANDING, true);
 
         if (!player->isAlive())
@@ -867,7 +873,7 @@ void Battleground::EndBattleground(uint32 winner)
         }
 
         // per player calculation
-        if (isArena() && isRated() && winnerArenaTeam && loserArenaTeam && winnerArenaTeam != loserArenaTeam)
+        if (isArena() && isRated() && winnerArenaTeam && loserArenaTeam && winnerArenaTeam != loserArenaTeam && _wintrading == NO_ERR)
         {
             if (team == winner)
             {
@@ -924,7 +930,7 @@ void Battleground::EndBattleground(uint32 winner)
         player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_BATTLEGROUND, 1);
     }
 
-    if (isArena() && isRated() && winnerArenaTeam && loserArenaTeam && winnerArenaTeam != loserArenaTeam)
+    if (isArena() && isRated() && winnerArenaTeam && loserArenaTeam && winnerArenaTeam != loserArenaTeam && _wintrading == NO_ERR)
     {
         // save the stat changes
         winnerArenaTeam->SaveToDB();
@@ -935,8 +941,19 @@ void Battleground::EndBattleground(uint32 winner)
         loserArenaTeam->NotifyStatsChanged();
     }
 
-    if (winmsg_id)
+    if (winmsg_id && _wintrading == NO_ERR)
         SendMessageToAll(winmsg_id, CHAT_MSG_BG_SYSTEM_NEUTRAL);
+    else if (_wintrading == ERR_SAME_IP)
+        SendMessageToAll(LANG_WINTRADING_SAME_IP, CHAT_MSG_BG_SYSTEM_NEUTRAL);
+    else if (_wintrading == ERR_TIME)
+        SendMessageToAll(LANG_WINTRADING_TIME, CHAT_MSG_BG_SYSTEM_NEUTRAL);
+}
+
+void Battleground::EndOfMatchChecks(uint32 winnerTeam, uint32 loserTeam)
+{
+    //Make sure that the games lasts more than the starting time
+    if (GetStartDelayTime() > 0)
+        SetWintrading(ERR_TIME);  
 }
 
 uint32 Battleground::GetBonusHonorFromKill(uint32 kills) const

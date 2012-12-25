@@ -1,0 +1,3 @@
+INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`) VALUES
+  (12000, 'Someone on your team has the same IP with a member from the opponent team. No rating will be given for this match!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+  (12001, 'This game lasted less than allowed time. No rating will be given for this match!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
