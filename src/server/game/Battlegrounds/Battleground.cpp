@@ -715,6 +715,14 @@ void Battleground::RewardReputationToTeam(uint32 faction_id, uint32 Reputation, 
                 player->GetReputationMgr().ModifyReputation(factionEntry, Reputation);
 }
 
+void Battleground::RewardQuestToTeam(uint32 quest_id, uint32 TeamID)
+{
+    for (BattlegroundPlayerMap::const_iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
+        if (Player* player = _GetPlayerForTeam(TeamID, itr, "RewardQuestToTeam"))
+           if (player->IsActiveQuest(quest_id))
+               player->CompleteQuest(quest_id);
+}
+
 void Battleground::UpdateWorldState(uint32 Field, uint32 Value)
 {
     WorldPacket data;

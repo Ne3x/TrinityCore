@@ -244,12 +244,12 @@ enum WintradingResult
     ERR_TIME    = 2         // The match lasted less than the starting time + 10 seconds.
 };
 
-enum BGEvent
+enum BGEventQuest
 {
-    BG_EVENT_WSG  = 100,
-    BG_EVENT_AB   = 101,
-    BG_EVENT_EOTS = 102,
-    BG_EVENT_SOTA = 103
+    BG_QUEST_WSG  = 70012,
+    BG_QUEST_AB   = 70013,
+    BG_QUEST_EOTS = 70014,
+    BG_QUEST_SOTA = 70015
 };
 
 struct BattlegroundScore
@@ -434,6 +434,7 @@ class Battleground
         void RemoveAuraOnTeam(uint32 SpellID, uint32 TeamID);
         void RewardHonorToTeam(uint32 Honor, uint32 TeamID);
         void RewardReputationToTeam(uint32 faction_id, uint32 Reputation, uint32 TeamID);
+        void RewardQuestToTeam(uint32 quest_id, uint32 TeamID);
         void UpdateWorldState(uint32 Field, uint32 Value);
         void UpdateWorldStateForPlayer(uint32 Field, uint32 Value, Player* Source);
         void EndBattleground(uint32 winner);
