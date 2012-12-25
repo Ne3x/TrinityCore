@@ -883,6 +883,7 @@ void Battleground::EndBattleground(uint32 winner)
                 player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_WIN_ARENA, GetMapId());
 
                 winnerArenaTeam->MemberWon(player, loserMatchmakerRating, winnerMatchmakerChange);
+                player->RewardGlory(35, Player::PVP_ARENA);
             }
             else
             {
@@ -907,7 +908,10 @@ void Battleground::EndBattleground(uint32 winner)
                     player->ModifyArenaPoints(winner_arena);
                 if (!player->GetRandomWinner())
                     player->SetRandomWinner(true);
+                player->RewardGlory(50, Player::PVP_BG);
             }
+            else if (isBattleground())
+                player->RewardGlory(50, Player::PVP_BG);
 
             player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_WIN_BG, 1);
         }

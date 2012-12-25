@@ -11,6 +11,7 @@
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
   Custom/npc_transmogrifier_gossip.cpp
+  Custom/player_hk_scripts.cpp
 )
 
 message("  -> Prepared: Custom")
