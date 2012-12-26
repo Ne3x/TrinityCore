@@ -1279,14 +1279,13 @@ void AddBattlegroundScripts()
 #ifdef SCRIPTS
 /* This is where custom scripts' loading functions should be declared. */
     void AddSC_npc_transmogrifier_gossip();
-    void AddSC_player_HK_scripts();
     void AddSC_go_portals();
     void AddSC_item_arena_stone();
     void AddSC_npc_misc_gossips();
     void AddSC_npc_trainer_gossips();
     void AddSC_npc_vendor_gossips();
     void AddSC_npc_warper_gossips();
-
+    void AddSC_player_scripts();
 #endif
 
 void AddCustomScripts()
@@ -1294,12 +1293,12 @@ void AddCustomScripts()
 #ifdef SCRIPTS
     /* This is where custom scripts should be added. */
     AddSC_npc_transmogrifier_gossip();
-    AddSC_player_HK_scripts();
     AddSC_go_portals();
     AddSC_item_arena_stone();
     AddSC_npc_misc_gossips();
     AddSC_npc_trainer_gossips();
     AddSC_npc_vendor_gossips();
     AddSC_npc_warper_gossips();
+    AddSC_player_scripts();
 #endif
 }
