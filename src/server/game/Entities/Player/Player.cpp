@@ -18635,6 +18635,15 @@ bool Player::CheckInstanceLoginValid()
         // cannot be in raid instance without a group
         if (!GetGroup())
             return false;
+
+        Map* map = GetMap();
+        uint32 maxPlayers = ((InstanceMap*)map)->GetMaxPlayers();
+        if (map->GetPlayersCountExceptGMs() > maxPlayers)
+        {
+            sLog->outInfo(LOG_FILTER_MAPS, "MAP: Instance '%u' of map '%s' cannot have more than '%u' players. Player '%s' rejected", GetInstanceId(), map->GetMapName(), maxPlayers, GetName());
+            SendTransferAborted(map->GetId(), TRANSFER_ABORT_MAX_PLAYERS);
+            return false;
+        }
     }
     else
     {
