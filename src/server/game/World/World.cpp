@@ -2223,6 +2223,10 @@ void World::SendGMText(int32 string_id, ...)
         if (AccountMgr::IsPlayerAccount(itr->second->GetSecurity()))
             continue;
 
+        //Only show GM text to level 2 or above
+        if (itr->second->GetSecurity() < SEC_GAMEMASTER)
+            continue;
+
         wt_do(itr->second->GetPlayer());
     }
 

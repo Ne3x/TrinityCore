@@ -97,7 +97,7 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry* auction, SQLTransaction& 
     uint64 bidder_guid = MAKE_NEW_GUID(auction->bidder, 0, HIGHGUID_PLAYER);
     Player* bidder = ObjectAccessor::FindPlayer(bidder_guid);
     // data for gm.log
-    if (sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE))
+    if (sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE) && bidder->GetSession()->GetSecurity() >= SEC_GAMEMASTER)
     {
         uint32 bidder_security = 0;
         std::string bidder_name;

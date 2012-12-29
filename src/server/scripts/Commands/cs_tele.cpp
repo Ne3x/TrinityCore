@@ -310,6 +310,14 @@ public:
             handler->SetSentErrorMessage(true);
             return false;
         }
+        
+        //No longer allow players to teleport while they have Stealth, Prowl, Divine Shield, and Feign Death 
+        if (me->HasAura(1784, me->GetGUID()) || me->HasAura(5215, me->GetGUID()) || me->HasAura(642, me->GetGUID()) || me->HasAura(5384, me->GetGUID()))
+        {
+            handler->SendSysMessage(LANG_YOU_IN_COMBAT);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
 
         if (me->isInCombat())
         {

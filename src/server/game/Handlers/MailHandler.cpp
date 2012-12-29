@@ -261,7 +261,7 @@ void WorldSession::HandleSendMail(WorldPacket& recvData)
             for (uint8 i = 0; i < items_count; ++i)
             {
                 Item* item = items[i];
-                if (!AccountMgr::IsPlayerAccount(GetSecurity()) && sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE))
+                if (!AccountMgr::IsPlayerAccount(GetSecurity()) && sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE) && GetSecurity() >= SEC_GAMEMASTER)
                 {
                     sLog->outCommand(GetAccountId(), "GM %s (Account: %u) mail item: %s (Entry: %u Count: %u) to player: %s (Account: %u)",
                         GetPlayerName().c_str(), GetAccountId(), item->GetTemplate()->Name1.c_str(), item->GetEntry(), item->GetCount(), receiver.c_str(), rc_account);
@@ -281,7 +281,7 @@ void WorldSession::HandleSendMail(WorldPacket& recvData)
             needItemDelay = player->GetSession()->GetAccountId() != rc_account;
         }
 
-        if (money > 0 && !AccountMgr::IsPlayerAccount(GetSecurity()) && sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE))
+        if (money > 0 && !AccountMgr::IsPlayerAccount(GetSecurity()) && sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE) && GetSecurity() >= SEC_GAMEMASTER)
         {
             sLog->outCommand(GetAccountId(), "GM %s (Account: %u) mail money: %u to player: %s (Account: %u)",
                 GetPlayerName().c_str(), GetAccountId(), money, receiver.c_str(), rc_account);
@@ -462,7 +462,7 @@ void WorldSession::HandleMailTakeItem(WorldPacket& recvData)
 
             uint32 sender_accId = 0;
 
-            if (!AccountMgr::IsPlayerAccount(GetSecurity()) && sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE))
+            if (!AccountMgr::IsPlayerAccount(GetSecurity()) && sWorld->getBoolConfig(CONFIG_GM_LOG_TRADE) && GetSecurity() >= SEC_GAMEMASTER)
             {
                 std::string sender_name;
                 if (receive)
