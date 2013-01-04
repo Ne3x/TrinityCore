@@ -228,8 +228,9 @@ class npc_wrathful_vendor : public CreatureScript
             {
                 pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, "Season VIII Armor Sets", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
                 pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, "Season VIII Misc Items", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, "Season VIII level:264 Weapons", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, "Season VIII level:277 Weapons", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, "Season VIII Basic Weapons", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, "Season VIII Advance Weapons", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, "Season VIII 3v3 and 5v5 Rewards", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
                 pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
                 return true;
             }
@@ -254,6 +255,10 @@ class npc_wrathful_vendor : public CreatureScript
                     break;
 
                 case GOSSIP_ACTION_INFO_DEF+3:
+                    pPlayer->SEND_VENDORLIST_ADVANCED(pCreature->GetGUID(), 4);
+                    break;
+
+                case GOSSIP_ACTION_INFO_DEF+4:
                     pPlayer->SEND_VENDORLIST_ADVANCED(pCreature->GetGUID(), 4);
                     break;
 

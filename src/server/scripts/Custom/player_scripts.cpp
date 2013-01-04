@@ -18,6 +18,7 @@ class reset_duel_cooldowns : public PlayerScript
 enum ZoneId
 {
     WETLANDS = 11,
+    QUELTHAS = 2037,
 };
 
 enum AreaId
@@ -33,11 +34,15 @@ class set_sanctuary : public PlayerScript
     void OnUpdateZone(Player* player, uint32 newZone, uint32 newArea)
     {
         if (newZone == WETLANDS && newArea == THE_FORBIDDEN_SEA)
-        {
-            player->SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
-            player->pvpInfo.inNoPvPArea = true;
-            player->CombatStopWithPets();
-        }
+            SetSanctuary(player);
+        else if (newZone == QUELTHAS && newArea == QUELTHAS)
+            SetSanctuary(player);
+    }
+    void SetSanctuary(Player* player)
+    {
+        player->SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
+        player->pvpInfo.inNoPvPArea = true;
+        player->CombatStopWithPets();
     }
 };
 
